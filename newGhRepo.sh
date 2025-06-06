@@ -1,10 +1,10 @@
 #! /bin/sh
 repoName=$1
 
-while [-z "$repoName"]
+while [ -z "$repoName" ]
 do
     echo 'Provide a repository name'
-    read -r -p $'Repository name:' repoName
+    read -r -p $'Repository name: ' repoName
 done
 
 echo "# $repoName" >> README.md
@@ -12,9 +12,8 @@ git init
 git add .
 git commit -m "first commit"
 
-curl -u davidfumero https://api.github.com/user/repos -d '{"name": "'"$repoName"'", "private":false}'
-
-GIT_URL=$(curl -H "Accept: application/vnd.github.v3+json" https://api.github.com/repos/davidfumero/"$repoName" | jq -r '.clone_url')
+# Create the repository on GitHub (public; use --private for private repos)
+gh repo create "$repoName" --public --source=. --remote=origin --push
 
 git branch -M main
 git remote add origin $GIT_URL
